@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 mt-10">
+  <div class="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8 mt-10 animate-fade-down">
     <!-- Content -->
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
       <img class="mx-auto h-12 w-auto" src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg" alt="Workflow">
@@ -64,6 +64,49 @@
         </form>
       </div>
     </div>
+<!-- Modal for terms and conditions -->
+<div v-if="showTermsModal" class="fixed z-10 inset-0 overflow-y-auto">
+  <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+
+    <!-- Background overlay -->
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+    <!-- Modal panel -->
+    <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+      <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+        <div class="sm:flex sm:items-start">
+          <!-- Icon -->
+          <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
+            <!-- Heroicon name: check -->
+            <svg class="h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+          </div>
+          <!-- Content -->
+          <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+              ข้อตกลงการใช้บริการ
+            </h3>
+            <div class="mt-2">
+              <p class="text-sm text-gray-500">
+                กรุณาอ่านและยอมรับข้อตกลงการใช้บริการก่อนที่จะดำเนินการต่อ
+              </p>
+              <!-- Your terms and conditions here -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+        <button @click="acceptTerms" type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm">
+          ยอมรับ
+        </button>
+        <button @click="declineTerms" type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+          ปฏิเสธ
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
     <!-- Modal -->
     <div v-if="showModal" class="fixed z-10  mt-20 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
@@ -125,31 +168,33 @@ export default {
   },
   methods: {
     async registerUser() {
-      if (this.user_password !== this.confirmPassword) {
-        this.passwordMismatchError = "รหัสผ่านไม่ตรงกัน โปรดลองอีกครั้ง";
-        return;
-      }
+  if (this.user_password !== this.confirmPassword) {
+    this.passwordMismatchError = "รหัสผ่านไม่ตรงกัน โปรดลองอีกครั้ง";
+    return;
+  }
 
-      this.isSubmitting = true;
+  this.isSubmitting = true;
 
-      try {
-        const response = await axios.post(`${import.meta.env.VITE_API_ME}/user/register`, {
-          user_email: this.user_email, // แก้ไขชื่อของ property ให้เป็น user_email
-          user_password: this.user_password, // แก้ไขชื่อของ property ให้เป็น user_password
-          confirmPassword: this.confirmPassword,
-          email: this.email
-        });
+  try {
+    const response = await axios.post(`${import.meta.env.VITE_API_HR}/user/register`, {
+      user_email: this.user_email,
+      user_password: this.user_password
+    });
 
-        console.log('การสมัครสมาชิกสำเร็จ:', response.data);
-        // แสดง modal เมื่อการสมัครสมาชิกสำเร็จ
-        this.showModal = true;
-      } catch (error) {
-        console.error('การสมัครสมาชิกล้มเหลว:', error.message);
-        // จัดการข้อผิดพลาด, เช่น แสดงข้อความผิดพลาด
-      } finally {
-        this.isSubmitting = false;
-      }
-    },
+    console.log('การสมัครสมาชิกสำเร็จ:', response.data);
+    
+    // เก็บ token ที่ได้รับจากเซิร์ฟเวอร์ไว้ใน localStorage หรือ sessionStorage
+    localStorage.setItem('userToken', response.data.token);
+   // Show modal when registration is successful
+   this.showModal = true;
+  } catch (error) {
+    console.error('การสมัครสมาชิกล้มเหลว:', error.message);
+    // Handle errors, such as displaying error messages
+  } finally {
+    this.isSubmitting = false;
+  }
+},
+
     closeModal() {
       this.showModal = false; // ปิด modal
       window.location.reload(); // รีโหลดหน้าเมื่อปิด modal

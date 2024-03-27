@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+  <div class="flex flex-col items-center justify-center min-h-screen animate-fade-down bg-gray-100">
     <h2 class="text-2xl font-bold mb-4">ลงชื่อเข้าใช้</h2>
     <form @submit.prevent="handleSubmit" class="w-full max-w-sm">
       <div class="mb-4">
@@ -35,13 +35,28 @@
     </form>
 
     <p class="mt-4">
-      {{ isLoggedIn ? 'ยินดีต้อนรับ' : 'ยังไม่มีบัญชี?' }}
+      {{ isLoggedIn ? `ยินดีต้อนรับ ${user_email}` : 'ยังไม่มีบัญชี?' }}
       <a href="/register" class="text-blue-500 hover:underline">สมัครสมาชิกที่นี่</a>
     </p>
+    <!-- Modal for login success -->
+    <div class="fixed inset-0 flex items-center justify-center" v-show="showModal">
+      <div class="bg-white rounded-lg p-8 shadow-lg">
+        <button @click="closeModal" class="absolute top-0 right-0 p-2 text-gray-500 hover:text-gray-700 focus:outline-none">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+        <p class="text-lg text-center text-gray-700">เข้าสู่ระบบสำเร็จ</p>
+        <p class="text-center mt-4">User email: {{ user_email }}</p> <!-- Show user email -->
+        <p class="text-center mt-2">User ID: {{ user_id }}</p> <!-- Show user ID -->
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -49,42 +64,45 @@ export default {
       password: '',
       error: '',
       isLoggedIn: false,
+      user_email: '', // Property to store user_email
+      user_id: '', // Property to store user_id
+      showModal: false // Add showModal property to control modal visibility
     };
   },
   methods: {
     async handleSubmit() {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_MEMBER}/user/login`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            user_email: this.email,
-            user_password: this.password,
-          }),
+        const response = await axios.post(`${import.meta.env.VITE_API_HR}/user/login`, {
+          user_email: this.email,
+          user_password: this.password
         });
-
-        if (response.ok) {
-          const userData = await response.json();
-          // เข้าสู่ระบบสำเร็จ
-          // ทำสิ่งที่ต้องการหลังจากเข้าสู่ระบบ
+        console.log(response.data)
+        if (response.data && response.data.status === true) {
           this.isLoggedIn = true;
+          this.user_email = response.data.data.user_email; // Store user_email from response
+          this.user_id = response.data.data._id; // Store user ID from response
+          this.showModal = true; // Show modal upon successful login
+          setTimeout(() => {
+            this.$router.push('/');
+          }, 2000); // Redirect to home page after 2 seconds
           console.log('เข้าสู่ระบบสำเร็จ');
         } else {
-          // กรณีผิดพลาดในการเข้าสู่ระบบ
-          this.error = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
-          console.error('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
+          this.error = response.data.message; // Set error message received from API
         }
       } catch (error) {
-        console.error('เกิดข้อผิดพลาด:', error);
-        this.error = 'เกิดข้อผิดพลาด';
-        // จัดการข้อผิดพลาดที่เกิดขึ้น
+        console.error('เกิดข้อผิดพลาดในการเข้าสู่ระบบ:', error);
+        this.error = 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ';
       }
     },
-  },
+    closeModal() {
+      this.showModal = false; // Close modal
+    }
+  }
 };
+
 </script>
+
+
 
 <style scoped>
 /* Your scoped styles here */

@@ -1,5 +1,7 @@
 <template>
-	<div class="member-account text-dark pb-4">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+
+	<div class="member-account text-dark pb-4 mt-20">
 	  <div class="container">
 		<h2 class="mb-3">แก้ไขข้อมูลใบสมัครงาน</h2>
   
@@ -17,6 +19,8 @@
 		  <div class="tab-content px-0 py-2" id="userTabContent">
 			<div class="tab-pane show active" id="personal" role="tabpanel" aria-labelledby="personal-tab">
 			  <h4>ข้อมูลทั่วไป</h4>
+			  <!-- ส่วนข้อมูลส่วนตัว -->
+			  <!-- ข้อมูลรูป -->
 			  <div class="form-group row">
 				<label class="col-sm-3 col-form-label">รูปภาพ</label>
 				<div class="col-sm-9">
@@ -29,95 +33,227 @@
 				  </ul>
 				</div>
 			  </div>
+			<!-- ชื่อ-สกุล -->
+<div class="form-group row">
+  <label class="col-sm-3 col-form-label">ชื่อ-สกุล *</label>
+  <div class="col-sm-9">
+    <input type="text" class="form-control border rounded-md px-3 py-2 w-full" name="user_personal[fullname]" value="" required="">
+    <div class="help-block with-errors"></div>
+  </div>
+</div>
+
+			  <!-- เพศ -->
 			  <div class="form-group row">
-				<!-- ส่วนอื่น ๆ ของแบบฟอร์ม -->
-			  </div>
-			</div>
-		  </div>
-  
-		  <hr>
-		  <button type="submit" class="btn btn-app btn-green disabled" id="btn-save-personal" style="pointer-events: all; cursor: pointer;">บันทึกข้อมูล</button>
-		  <a href="https://www.jobnorththailand.com/employee/account" class="btn btn-app btn-border-green">ย้อนกลับ</a>
-  
-		</form>
-	  </div>
-	</div>
-  </template>
-  
-  <script>
-  export default {
-	name: 'About'
+				<label class="col-sm-3 col-form-label">เพศ *</label>
+				<div class="col-sm-9 form-inline">
+				  <input type="radio" class="mr-2" name="user_personal[sex]" value="ชาย" required=""> ชาย
+				  <input type="radio" class="ml                -2 mr-2" name="user_personal[sex]" value="หญิง" required="" onchange="validateSoldier(event,'ได้รับการยกเว้น')"> หญิง
+              </div>
+            </div>
+            <!-- สถานะสมรส -->
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label">สถานะสมรส *</label>
+              <div class="col-sm-9 form-inline">
+                <input type="radio" class="mr-2" name="user_personal[marry]" value="โสด" required=""> โสด
+                <input type="radio" class="ml-2 mr-2" name="user_personal[marry]" value="สมรส" required=""> สมรส
+                <input type="radio" class="ml-2 mr-2" name="user_personal[marry]" value="แยกกันอยู่" required=""> แยกกันอยู่
+                <input type="radio" class="ml-2 mr-2" name="user_personal[marry]" value="หย่าร้าง" required=""> หย่าร้าง
+              </div>
+            </div>
+          <!-- สัญชาติ -->
+<div class="form-group row">
+  <label class="col-sm-3 col-form-label">สัญชาติ *</label>
+  <div class="col-sm-9">
+    <input type="text" class="form-control border rounded-md px-3 py-2 w-full" name="user_personal[nationality]" value="" required="">
+    <div class="help-block with-errors"></div>
+  </div>
+</div>
+
+          <!-- ศาสนา -->
+<div class="form-group row">
+  <label class="col-sm-3 col-form-label">ศาสนา *</label>
+  <div class="col-sm-9">
+    <input type="text" class="form-control border rounded-md px-3 py-2 w-full" name="user_personal[religion]" value="" required="">
+    <div class="help-block with-errors"></div>
+  </div>
+</div>
+
+            <!-- วัน เดือน ปีเกิด -->
+
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label">วัน เดือน ปีเกิด *</label>
+              <div class="col-sm-9 form-inline">
+                <input id="datepicker" class="form-input mt-1 block w-full rounded-md border-gray-300" type="text" placeholder="Select date">
+
+                  <!-- ตัดเกรด -->
+               
+                <select class="form-control mr-2" name="birthday[month]" data-text="month" onchange="changeDOB(this,event)" required="">
+                  <option value="01">มกราคม</option>
+                  <option value="02">กุมภาพันธ์</option>
+                  <option value="03" selected="">มีนาคม</option>
+                  <!-- ตัดเกรด -->
+                </select>
+                <select class="form-control" name="birthday[year]" data-text="year" onchange="changeDOB(this,event)" required="">
+                  <!-- ตัดเกรด -->
+                </select>
+                <div class="help-block with-errors"></div>
+              </div>
+            </div>
+           <!-- ส่วนสูง -->
+<div class="form-group row">
+  <label class="col-sm-3 col-form-label">ส่วนสูง *</label>
+  <div class="col-sm-9 form-inline">
+    <input type="number" class="form-control mr-2 border rounded-md px-3 py-2" name="user_personal[tall]" value="" required=""> เซ็นติเมตร
+    <div class="help-block with-errors"></div>
+  </div>
+</div>
+
+<!-- น้ำหนัก -->
+<div class="form-group row">
+  <label class="col-sm-3 col-form-label">น้ำหนัก *</label>
+  <div class="col-sm-9 form-inline">
+    <input type="number" class="form-control mr-2 border rounded-md px-3 py-2" name="user_personal[weighty]" value="" required=""> กิโลกรัม
+    <div class="help-block with-errors"></div>
+  </div>
+</div>
+
+            <!-- สถานะภาพทางทหาร -->
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label">สถานะภาพทางทหาร *</label>
+              <div class="col-sm-9">
+                <div>เพศหญิง ให้เลือก ได้รับการยกเว้น</div>
+                <select class="form-control" name="user_personal[soldier]" required="">
+                  <option value=""></option>
+                  <option value="รอการเกณฑ์ทหาร">รอการเกณฑ์ทหาร</option>
+                  <!-- ตัดเกรด -->
+                </select>
+                <div class="help-block with-errors"></div>
+              </div>
+            </div>
+
+            <!-- ข้อมูลการติดต่อ -->
+            <h4>ข้อมูลการติดต่อ</h4>
+          <!-- ที่อยู่ -->
+<div class="form-group row">
+  <label class="col-sm-3 col-form-label">ที่อยู่ *</label>
+  <div class="col-sm-9">
+    <input type="text" class="border rounded-md px-3 py-2 w-full" name="user_personal[address]" value="" required="">
+    <div class="help-block with-errors"></div>
+  </div>
+</div>
+
+            <!-- จังหวัด -->
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label">จังหวัด *</label>
+              <div class="col-sm-9">
+                <select class="form-control" name="user_personal[province]" required="">
+                  <option value="" selected disabled>กรุณาเลือกจังหวัด</option>
+                  <option value="กรุงเทพมหานคร">กรุงเทพมหานคร</option>
+                  <option value="สมุทรปราการ">สมุทรปราการ</option>
+                  <option value                  ="นนทบุรี">นนทบุรี</option>
+                  <!-- เพิ่มต่อไปตามจำนวนจังหวัดที่ต้องการ -->
+                </select>
+                <div class="help-block with-errors"></div>
+              </div>
+            </div>
+          <!-- รหัสไปรษณีย์ -->
+<div class="form-group row">
+  <label class="col-sm-3 col-form-label">รหัสไปรษณีย์ *</label>
+  <div class="col-sm-9">
+    <input type="text" class="border rounded-md px-3 py-2 w-full" name="user_personal[zipcode]" value="" required="">
+    <div class="help-block with-errors"></div>
+  </div>
+</div>
+
+<!-- Email -->
+<div class="form-group row">
+  <label class="col-sm-3 col-form-label">Email *</label>
+  <div class="col-sm-9">
+    <input type="email" class="border rounded-md px-3 py-2 w-full" name="user_personal[email]" value="" required="">
+    <div class="help-block with-errors"></div>
+  </div>
+</div>
+
+           <!-- Phone -->
+<div class="form-group row">
+  <label class="col-sm-3 col-form-label">Phone *</label>
+  <div class="col-sm-9">
+    <input type="tel" class="border rounded-md px-3 py-2 w-full" name="user_personal[phone]" value="" required="">
+    <div class="help-block with-errors"></div>
+  </div>
+</div>
+
+<!-- ID Line -->
+<div class="form-group row">
+  <label class="col-sm-3 col-form-label">ID Line</label>
+  <div class="col-sm-9">
+    <input type="text" class="border rounded-md px-3 py-2 w-full" name="user_personal[line_id]" value="">
+    <div class="help-block with-errors"></div>
+  </div>
+
+
+            </div>
+
+          </div>
+        </div>
+        <!-- ปุ่มบันทึก -->
+        <hr>
+        <button type="submit" class="btn btn-app btn-green disabled" id="btn-save-personal" style="pointer-events: all; cursor: pointer;">บันทึกข้อมูล</button>
+        <a href="https://www.jobnorththailand.com/employee/account" class="btn btn-app btn-border-green">ย้อนกลับ</a>
+      </form>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'About'
+}
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
+import 'bulma/css/bulma.min.css';
+
+flatpickr("#datepicker", {
+    dateFormat: "Y-m-d",
+    // และอื่น ๆ ตามต้องการ
+});
+
+</script>
+
+<style scoped>
+  /* Styles for the form container */
+  .form-container {
+    width: fit-content; /* Adjust width to fit content */
+    margin: auto; /* Center horizontally */
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(26, 108, 82, 0.1);
   }
-  </script>
-  
-  <style scoped>
+
+  /* Styles for the parent container */
   .member-account {
-	color: #333; /* เปลี่ยนสีข้อความ */
-	padding-bottom: 4rem; /* เพิ่มช่องว่างด้านล่าง */
+    text-align: justify; /* Center the form container horizontally */
+    padding: 20px; /* Add padding to the parent container */
+    border: 1px solid #9e3939; /* Add border to the parent container */
+    border-radius: 10px; /* Add border radius to the parent container */
+    box-shadow: 0 0 10px rgba(26, 108, 82, 0.1); /* Add box shadow to the parent container */
   }
-  
-  .container {
-	max-width: 1140px; /* กำหนดความกว้างสูงสุด */
-	margin: 0 auto; /* วางตรงกลาง */
-	padding: 0 1rem; /* เพิ่มช่องว่างด้านซ้ายขวา */
-  }
-  
-  h2 {
-	margin-bottom: 1.5rem; /* เพิ่มระยะห่างด้านล่าง */
-  }
-  
-  .nav-tabs {
-	padding: 0;
-  }
-  
-  .tab-pane {
-	padding: 0;
-  }
-  
-  .form-group {
-	display: flex; /* ให้เรียงข้อมูลในแนวนอน */
-	margin-bottom: 1rem; /* เพิ่มระยะห่างด้านล่าง */
-  }
-  
-  .col-form-label {
-	width: 25%; /* กำหนดความกว้างของ label */
-  }
-  
-  .col-sm-9 {
-	width: 75%; /* กำหนดความกว้างของ input */
-  }
-  
-  .btn {
-	font-size: 1rem; /* กำหนดขนาดตัวอักษร */
-	border-radius: 0.375rem; /* กำหนดขนาดของมุม */
-	font-weight: 600; /* กำหนดความหนาของตัวอักษร */
-	padding: 0.5rem 1rem; /* กำหนดขนาดพื้นที่ภายในปุ่ม */
-  }
-  
-  .btn-green {
-	background-color: #38a169; /* เปลี่ยนสีพืน้ำเขียวของปุ่มเป็นสีเขียวเข้ม */
-}
 
-.btn-green {
-background-color: #2d6a4f; /* เปลี่ยนสีพื้นหลังของปุ่มเป็นสีเขียวเข้ม /
-color: #fff; / เปลี่ยนสีข้อความบนปุ่มเป็นสีขาว /
-border: none; / ลบเส้นขอบของปุ่ม */
-}
-
-.btn-green:hover {
-background-color: #205e46; /* เปลี่ยนสีพื้นหลังของปุ่มเมื่อเม้าส์ชี้ไป /
-color: #fff; / เปลี่ยนสีข้อความบนปุ่มเป็นสีขาว */
-}
-
-.btn-border-green {
-background-color: transparent; /* ทำให้พื้นหลังของปุ่มโปร่งใส /
-border: 2px solid #2d6a4f; / เปลี่ยนสีเส้นขอบของปุ่มเป็นสีเขียวเข้ม /
-color: #2d6a4f; / เปลี่ยนสีข้อความบนปุ่มเป็นสีเขียวเข้ม */
-}
-
-.btn-border-green:hover {
-background-color: #2d6a4f; /* เปลี่ยนสีพื้นหลังของปุ่มเป็นสีเขียวเข้ม /
-color: #fff; / เปลี่ยนสีข้อความบนปุ่มเป็นสีขาว */
-}
+  /* Styles for the input fields */
+  .form-container input[type="text"],
+  .form-container input[type="email"],
+  .form-container input[type="tel"],
+  .form-container input[type="number"],
+  .form-container select,
+  .form-container textarea {
+    color: #000; /* Set text color to black */
+  }
 </style>
+
+
+
+
+
+
   
